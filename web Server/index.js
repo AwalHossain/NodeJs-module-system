@@ -1,72 +1,47 @@
+const http = require("http");
+const PORT = 4000;
+const server = http.createServer();
 
-const http = require('http');
-http.get('http://localhost:4000', (res)=>{
-    const {statusCode} = res;
-    
-    const contenType = res.headers['content-type'];
+const frineds = [
+  {
+    id:0,
+    name:"Awal Hossain"
+  },{
+    id:1,
+    name:"Yeamin Hoassina"
+  },  {
+    id:2,
+name:"Raiyan Khana"
+  },
+]
 
-    let error;
+server.on('request',(req, res)=>{
 
-    if(statusCode != 200){
-        error = new Error('Request Failed.\n' + `Status code ${statusCode}`)
+  const uPath = req.url.split("/");
+  console.log(uPath.length,"pat");
 
-    }else if(!/^application\/json/.test(contenType)){
-        error = new Error ("Invalid content-type");
+  if(req.method == 'GET' && uPath[1] == 'friends'){
+    let num = Number(uPath[2]);
+    if(num && frineds.length-1 >= num){
+      res.end(JSON.stringify(frineds[num]))
+    }else if(frineds.length -1 < num){
+      res.statusCode = 404;
+      
+      res.end(JSON.stringify({message:"Data not found"}))
+    }else{
+      res.end(JSON.stringify(frineds))
+
     }
 
-    if(error){
-        console.error(error.message);
-        res.resume();
-        return;
-    }
-
-    res.setEncoding('utf-8');
-
-    let rawData = '';
-
-    res.on('data', (chunk)=>{
-        rawData += chunk;
-    })
-
-    res.on('end', ()=>{
-        try{
-            const parseData = JSON.parse(rawData);
-            console.log(parseData);
-        }catch(err){
-            console.error(`Gor error: ${err.message}`);
-        }
-    })
-
-
-})
-
-
-
-
-
-
-
-
-
-
-
-
-
-const server = http.createServer((req, res)=>{
-
-    res.writeHead(200, {
-        'Content-type':"application/json"
-    })
-
-    res.end(JSON.stringify({
-        id: 182204,
-        name:"Awal Hossain"
-    }))
-})
-
-
-    server.listen(4000, ()=>{
-        console.log(`this server is running on ${4000}`);
-    })
-
     
+  }   
+    // if(length == length)
+  console.log(uPath);
+
+
+}
+)
+
+server.listen(PORT, ()=>{
+    console.log(`This server is listennig through ${PORT}`);
+})
