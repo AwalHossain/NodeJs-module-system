@@ -18,13 +18,27 @@ name:"Raiyan Khana"
 server.on('request',(req, res)=>{
 
   const uPath = req.url.split("/");
-  console.log(uPath.length,"pat");
+  console.log(req.method);
+  if(req.method == 'POST' && uPath[1] == 'friends'){
+    
+    req.on('data', (dat)=>{
+      let friend = dat.toString();
+      frineds.push(JSON.parse(friend))
 
-  if(req.method == 'GET' && uPath[1] == 'friends'){
+      console.log("ff", frineds);
+    })
+
+    // Create a pipe to send back the data to the user 
+      // res.setEncoding('utf8');
+    res.statusCode = 200;
+
+    res.end({"msg":"got the data"})
+  }
+  else if(req.method == 'GET' && uPath[1] == 'friends'){
     let num = Number(uPath[2]);
-    if(num && frineds.length-1 >= num){
+    if( frineds.length >= num){
       res.end(JSON.stringify(frineds[num]))
-    }else if(frineds.length -1 < num){
+    }else if(frineds.length  < num){
       res.statusCode = 404;
       
       res.end(JSON.stringify({message:"Data not found"}))
@@ -36,7 +50,7 @@ server.on('request',(req, res)=>{
     
   }   
     // if(length == length)
-  console.log(uPath);
+ 
 
 
 }
